@@ -7,9 +7,12 @@ pipeline {
     }
 
     stages {
+
         stage('Clone GitHub Repo') {
             steps {
-                git credentialsId: 'github-creds', url: 'https://github.com/Raghu-GKR/project-cicd.git'
+                git branch: 'main',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/Raghu-GKR/project-cicd.git'
             }
         }
 
