@@ -54,7 +54,7 @@ pipeline {
                 sh '''
                     docker rm -f webapp || true
                     docker pull raghugkr/webapp-image:latest
-                    docker run -d -p 8081:80 --name webapp raghugkr/webapp-image:latest
+                    docker run -d -p 80:80 --name webapp raghugkr/webapp-image:latest
                 '''
             }
         }
