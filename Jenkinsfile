@@ -49,17 +49,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Remote Server') {
+        stage('Deploy Web App') {
             steps {
-                sshagent(credentials: ['ssh-creds']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@107.20.36.49 "
-                            docker rm -f webapp || true &&
-                            docker pull raghugkr/webapp-image:latest &&
-                            docker run -d -p 80:80 --name webapp raghugkr/webapp-image:latest
-                        "
-                    '''
-                }
+                sh '''
+                    docker rm -f webapp || true
+                    docker pull raghugkr/webapp-image:latest
+                    docker run -d -p 80:80 --name webapp raghugkr/webapp-image:latest
+                '''
             }
         }
     }
