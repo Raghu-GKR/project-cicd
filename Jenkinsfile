@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_AUTH = credentials('DOCKER_CREDENTIALS')
-        GIT_AUTH = credentials('github-creds')
+        DOCKER_AUTH_USR = credentials('DOCKER_CREDENTIALS').username
+        DOCKER_AUTH_PSW = credentials('DOCKER_CREDENTIALS').password
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 sh '''
-                    echo "$DOCKER_AUTH_PSW" | docker login -u "$DOCKER_AUTH_USR" --password-stdin
+                    echo "${DOCKER_AUTH_PSW}" | docker login -u "${DOCKER_AUTH_USR}" --password-stdin
                 '''
             }
         }
@@ -51,13 +51,13 @@ pipeline {
 
         stage('Deploy to Remote Server') {
             steps {
-                sshagent(credentials: ['ssh-creds']) {
+                sshagent(['ssh-key-id']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@107.20.36.49 "
-                            docker rm -f webapp || true &&
+                        ssh -o StrictHostKeyChecking=no user@remote-server '
                             docker pull raghugkr/webapp-image:latest &&
+                            docker rm -f webapp || true &&
                             docker run -d -p 80:80 --name webapp raghugkr/webapp-image:latest
-                        "
+                        '
                     '''
                 }
             }
